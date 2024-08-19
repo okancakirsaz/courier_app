@@ -1,7 +1,7 @@
 part of '../orders_view.dart';
 
 class ActiveOrders extends StatelessWidget {
-  final dynamic viewModel;
+  final OrdersViewModel viewModel;
   const ActiveOrders({super.key, required this.viewModel});
 
   @override
@@ -52,10 +52,6 @@ class ActiveOrders extends StatelessWidget {
               padding: PaddingConsts.instance.bottom15,
               child: OrderWidget(
                 index: i,
-                fetchedCourierName: viewModel.activeOrders[i].courierId != null
-                    ? viewModel.getFetchedCourierName(
-                        viewModel.activeOrders[i].courierId)
-                    : null,
                 isOrderExpired: false,
                 viewModel: viewModel,
                 data: viewModel.activeOrders[i],

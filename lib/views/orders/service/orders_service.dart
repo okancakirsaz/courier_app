@@ -6,10 +6,12 @@ import 'package:haydi_ekspres_dev_tools/models/order_model.dart';
 import '../../../core/managers/network_manager.dart';
 
 final class OrdersService extends NetworkManager {
-  Future<List<OrderModel>?> getActiveOrders(String accessToken) async {
+  Future<List<OrderModel>?> getActiveOrders(
+      String courierId, String accessToken) async {
     try {
       final response = await network.get(
-        Endpoints.instance.getActiveOrdersHub,
+        Endpoints.instance.getActiveOrdersCourier,
+        queryParameters: {"courierId": courierId},
         options: Options(
           headers: setHeaderAccessToken(accessToken),
         ),

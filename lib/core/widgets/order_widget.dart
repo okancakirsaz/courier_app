@@ -17,16 +17,15 @@ import 'package:latlong2/latlong.dart';
 class OrderWidget extends StatelessWidget {
   final dynamic viewModel;
   final OrderModel data;
-  final String? fetchedCourierName;
   final int index;
   final bool isOrderExpired;
-  const OrderWidget(
-      {super.key,
-      required this.viewModel,
-      required this.data,
-      required this.isOrderExpired,
-      required this.index,
-      this.fetchedCourierName});
+  const OrderWidget({
+    super.key,
+    required this.viewModel,
+    required this.data,
+    required this.isOrderExpired,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -133,12 +132,6 @@ class OrderWidget extends StatelessWidget {
         padding: PaddingConsts.instance.top10,
         child: _buildAddressLine(),
       ),
-      fetchedCourierName != null
-          ? Text(
-              "Atanan Kurye: $fetchedCourierName",
-              style: TextConsts.instance.regularBlack12Bold,
-            )
-          : const SizedBox(),
       Padding(
         padding: PaddingConsts.instance.top10,
         child: isOrderExpired ? null : _buildContactButtons(),
@@ -214,9 +207,18 @@ class OrderWidget extends StatelessWidget {
       children: <Widget>[
         _buildSpecialButton(
           AssetConsts.instance.haydiCourier,
-          "Kurye ataması yap",
+          size: 0,
+          "Hub sorumlusu ile iletişime geç",
           () => viewModel.pickCourier(viewModel, data),
-        )
+        ),
+        data.addressData.courierAddressDirection != null
+            ? _buildSpecialButton(
+                AssetConsts.instance.haydiCourier,
+                size: 0,
+                "Kurye adres tarifi görüntüle",
+                () => viewModel.pickCourier(viewModel, data),
+              )
+            : const SizedBox(),
       ],
     );
   }
@@ -298,7 +300,7 @@ class OrderWidget extends StatelessWidget {
             padding: PaddingConsts.instance.right10,
             child: Text(
               text,
-              style: TextConsts.instance.regularBlack10,
+              style: TextConsts.instance.regularBlack12,
             ),
           ),
         ],

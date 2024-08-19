@@ -48,7 +48,8 @@ abstract class _LogInViewModelBase with Store, BaseViewModel {
   }
 
   Future<void> _cacheData(response) async {
-    await localeManager.setStringData(LocaleKeysEnums.id.name, response.code!);
+    await localeManager.setStringData(
+        LocaleKeysEnums.id.name, response.userId!);
     await localeManager.setStringData(
         LocaleKeysEnums.accessToken.name, response.accessToken!);
   }

@@ -1,3 +1,4 @@
+import 'package:courier_app/core/init/cache/local_keys_enums.dart';
 import 'package:flutter/material.dart';
 import 'package:haydi_ekspres_dev_tools/models/models_index.dart';
 import 'package:mobx/mobx.dart';
@@ -29,8 +30,8 @@ abstract class _OrdersViewModelBase with Store, BaseViewModel {
     //Every screen size changes this function triggering.
     //So this check saves api from over requests
     if (!isOrdersGot) {
-      final List<OrderModel>? response =
-          await service.getActiveOrders(accessToken!);
+      final List<OrderModel>? response = await service.getActiveOrders(
+          localeManager.getStringData(LocaleKeysEnums.id.name), accessToken!);
       if (response == null) {
         showErrorDialog();
         return false;
