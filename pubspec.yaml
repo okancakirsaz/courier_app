@@ -1,0 +1,53 @@
+name: courier_app
+description: "Courier App"
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.2
+
+  #Devtools
+  haydi_ekspres_dev_tools:
+    path: ../haydi_ekspres_dev_tools
+
+  #File
+
+  #UI
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.1
+  
+  #web_socket_channel: ^2.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+    
+  build_runner: ^2.4.9
+  mobx_codegen: ^2.4.0
+
+
+  flutter_lints: ^2.0.0
+
+
+flutter:
+
+
+  uses-material-design: true
+
+assets:
+  - packages/haydi_ekspres_dev_tools/lib/assets/icons/
+  - packages/haydi_ekspres_dev_tools/lib/assets/images/
+  - packages/haydi_ekspres_dev_tools/lib/assets/meta/
+
+
+
+
