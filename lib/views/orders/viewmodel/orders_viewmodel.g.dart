@@ -25,14 +25,40 @@ mixin _$OrdersViewModel on _OrdersViewModelBase, Store {
     });
   }
 
+  late final _$isWorkingAtom =
+      Atom(name: '_OrdersViewModelBase.isWorking', context: context);
+
+  @override
+  bool get isWorking {
+    _$isWorkingAtom.reportRead();
+    return super.isWorking;
+  }
+
+  @override
+  set isWorking(bool value) {
+    _$isWorkingAtom.reportWrite(value, super.isWorking, () {
+      super.isWorking = value;
+    });
+  }
+
+  late final _$updateCourierWorkStateAsyncAction = AsyncAction(
+      '_OrdersViewModelBase.updateCourierWorkState',
+      context: context);
+
+  @override
+  Future<void> updateCourierWorkState() {
+    return _$updateCourierWorkStateAsyncAction
+        .run(() => super.updateCourierWorkState());
+  }
+
   late final _$fetchNewOrderStateToApiAsyncAction = AsyncAction(
       '_OrdersViewModelBase.fetchNewOrderStateToApi',
       context: context);
 
   @override
-  Future<void> fetchNewOrderStateToApi(OrderModel data, String courierId) {
+  Future<void> fetchNewOrderStateToApi(String newStateText, OrderModel data) {
     return _$fetchNewOrderStateToApiAsyncAction
-        .run(() => super.fetchNewOrderStateToApi(data, courierId));
+        .run(() => super.fetchNewOrderStateToApi(newStateText, data));
   }
 
   late final _$_OrdersViewModelBaseActionController =
@@ -52,7 +78,8 @@ mixin _$OrdersViewModel on _OrdersViewModelBase, Store {
   @override
   String toString() {
     return '''
-activeOrders: ${activeOrders}
+activeOrders: ${activeOrders},
+isWorking: ${isWorking}
     ''';
   }
 }

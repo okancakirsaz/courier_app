@@ -7,8 +7,7 @@ class ActiveOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: PaddingConsts.instance.all20,
-      height: MediaQuery.of(context).size.height - 100,
+      margin: PaddingConsts.instance.all5,
       width: MediaQuery.of(context).size.width,
       child: _buildActiveOrders(),
     );

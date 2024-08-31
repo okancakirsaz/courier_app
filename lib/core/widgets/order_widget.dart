@@ -1,3 +1,4 @@
+import 'package:courier_app/views/orders/viewmodel/orders_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:haydi_ekspres_dev_tools/constants/asset_consts.dart';
@@ -15,7 +16,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
 
 class OrderWidget extends StatelessWidget {
-  final dynamic viewModel;
+  final OrdersViewModel viewModel;
   final OrderModel data;
   final int index;
   final bool isOrderExpired;
@@ -82,11 +83,9 @@ class OrderWidget extends StatelessWidget {
       height: 40,
       child: CustomStateFullButton(
         width: 150,
-        onPressed: () {},
+        onPressed: () async => viewModel.fetchNextOrderState(data),
         text: data.orderState,
-        style: data.orderState == WaitingRestaurantAccept.instance.text
-            ? TextConsts.instance.regularBlack12
-            : TextConsts.instance.regularWhite12,
+        style: TextConsts.instance.regularWhite12,
         backgroundColor: data.orderState.asOrderState.color,
       ),
     );
@@ -209,14 +208,14 @@ class OrderWidget extends StatelessWidget {
           AssetConsts.instance.haydiCourier,
           size: 0,
           "Hub sorumlusu ile iletişime geç",
-          () => viewModel.pickCourier(viewModel, data),
+          () => null,
         ),
         data.addressData.courierAddressDirection != null
             ? _buildSpecialButton(
                 AssetConsts.instance.haydiCourier,
                 size: 0,
                 "Kurye adres tarifi görüntüle",
-                () => viewModel.pickCourier(viewModel, data),
+                () => null,
               )
             : const SizedBox(),
       ],

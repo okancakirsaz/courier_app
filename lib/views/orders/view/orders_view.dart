@@ -8,6 +8,7 @@ import '../../../core/widgets/order_widget.dart';
 import '../viewmodel/orders_viewmodel.dart';
 
 part 'components/active_orders.dart';
+part 'components/courier_data.dart';
 
 class OrdersView extends StatelessWidget {
   const OrdersView({super.key});
@@ -18,10 +19,13 @@ class OrdersView extends StatelessWidget {
         viewModel: OrdersViewModel(),
         onPageBuilder: (context, model) {
           return CustomScaffold(
-              body: Column(
-            children: <Widget>[
-              ActiveOrders(viewModel: model),
-            ],
+              body: SafeArea(
+            child: Column(
+              children: <Widget>[
+                Expanded(flex: 1, child: CourierData(viewModel: model)),
+                Expanded(flex: 5, child: ActiveOrders(viewModel: model)),
+              ],
+            ),
           ));
         },
         onModelReady: (model) {

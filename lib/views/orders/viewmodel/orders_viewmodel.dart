@@ -20,31 +20,49 @@ abstract class _OrdersViewModelBase with Store, BaseViewModel {
   @observable
   ObservableList<OrderModel> activeOrders = ObservableList.of([]);
 
-  bool isOrdersGot = false;
-
   final TextEditingController cancelReason = TextEditingController();
-
+  CourierModel? courierData;
+  @observable
+  bool isWorking = false;
   final OrdersService service = OrdersService();
 
-  Future<bool> getActiveOrders() async {
-    //Every screen size changes this function triggering.
-    //So this check saves api from over requests
-    if (!isOrdersGot) {
-      final List<OrderModel>? response = await service.getActiveOrders(
-          localeManager.getStringData(LocaleKeysEnums.id.name), accessToken!);
-      if (response == null) {
-        showErrorDialog();
-        return false;
-      }
-      activeOrders = ObservableList.of(response);
-      for (OrderModel order in activeOrders) {
-        _listenOrderStateUpdate(order);
-      }
-      isOrdersGot = true;
-      return true;
-    } else {
-      return true;
+  Future<bool> getCourierData() async {
+    final CourierModel? response = await service.getCourier(
+        localeManager.getStringData(LocaleKeysEnums.id.name), accessToken!);
+    if (response == null) {
+      showErrorDialog();
+      return false;
     }
+    courierData = response;
+    isWorking = courierData!.isWorking;
+    return true;
+  }
+
+  @action
+  Future<void> updateCourierWorkState() async {
+    CourierModel updatedCourierData = courierData!;
+    updatedCourierData.isWorking = !updatedCourierData.isWorking;
+    final bool? response =
+        await service.updateCourierWorkState(updatedCourierData, accessToken!);
+    if (response == null) {
+      showErrorDialog();
+      return;
+    }
+    isWorking = response;
+  }
+
+  Future<bool> getActiveOrders() async {
+    final List<OrderModel>? response = await service.getActiveOrders(
+        localeManager.getStringData(LocaleKeysEnums.id.name), accessToken!);
+    if (response == null) {
+      showErrorDialog();
+      return false;
+    }
+    activeOrders = ObservableList.of(response);
+    for (OrderModel order in activeOrders) {
+      _listenOrderStateUpdate(order);
+    }
+    return true;
   }
 
   @action
@@ -63,9 +81,8 @@ abstract class _OrdersViewModelBase with Store, BaseViewModel {
 
   @action
   Future<void> fetchNewOrderStateToApi(
-      OrderModel data, String courierId) async {
-    data.orderState = WaitingAcceptFromCourier.instance.text;
-    data.courierId = courierId;
+      String newStateText, OrderModel data) async {
+    data.orderState = newStateText;
     final dynamic response = await service.updateOrderState(data, accessToken!);
     if (response == null) {
       showErrorDialog();
@@ -77,6 +94,20 @@ abstract class _OrdersViewModelBase with Store, BaseViewModel {
     }
     //Close dialog
     navigatorPop();
+  }
+
+  Future<void> fetchNextOrderState(OrderModel data) async {
+    final OrderState state = data.orderState.asOrderState;
+    OrderState? nextState;
+    if (state == WaitingAcceptFromCourier.instance) {
+      nextState = CourierIsOnWay.instance;
+    } else if (state == CourierIsOnWay.instance) {
+      nextState = PackageIsOnWay.instance;
+    } else if (state == PackageIsOnWay.instance) {
+      //Deliver order function
+      return;
+    }
+    await fetchNewOrderStateToApi(nextState!.text, data);
   }
 
   bool _checkOrderIsDeliveredOrCancelled(OrderState orderState) {
