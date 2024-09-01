@@ -204,18 +204,12 @@ class OrderWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        _buildSpecialButton(
-          AssetConsts.instance.haydiCourier,
-          size: 0,
-          "Hub sorumlusu ile iletişime geç",
-          () => null,
-        ),
         data.addressData.courierAddressDirection != null
             ? _buildSpecialButton(
                 AssetConsts.instance.haydiCourier,
                 size: 0,
                 "Kurye adres tarifi görüntüle",
-                () => null,
+                () => viewModel.showCourierAddressDirection(data.addressData),
               )
             : const SizedBox(),
       ],

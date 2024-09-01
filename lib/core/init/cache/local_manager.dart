@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-//TODO: Make stress test on shared preference
 class LocaleManager {
   static LocaleManager instance = LocaleManager();
   late SharedPreferences _instance;

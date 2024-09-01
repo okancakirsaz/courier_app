@@ -1,5 +1,8 @@
 import 'package:courier_app/core/init/cache/local_keys_enums.dart';
+import 'package:courier_app/views/orders/view/orders_view.dart';
 import 'package:flutter/material.dart';
+import 'package:haydi_ekspres_dev_tools/constants/constants_index.dart';
+import 'package:haydi_ekspres_dev_tools/haydi_ekspres_dev_tools.dart';
 import 'package:haydi_ekspres_dev_tools/models/models_index.dart';
 import 'package:mobx/mobx.dart';
 import '../../../core/base/viewmodel/base_viewmodel.dart';
@@ -13,14 +16,18 @@ class OrdersViewModel = _OrdersViewModelBase with _$OrdersViewModel;
 abstract class _OrdersViewModelBase with Store, BaseViewModel {
   @override
   void setContext(BuildContext context) => viewModelContext = context;
+  void setInstance(OrdersViewModel model) => viewModel = model;
 
   @override
   init() async {}
 
+  OrdersViewModel? viewModel;
+
   @observable
   ObservableList<OrderModel> activeOrders = ObservableList.of([]);
 
-  final TextEditingController cancelReason = TextEditingController();
+  final TextEditingController addressDirection = TextEditingController();
+  bool isAddressTrue = true;
   CourierModel? courierData;
   @observable
   bool isWorking = false;
@@ -104,7 +111,7 @@ abstract class _OrdersViewModelBase with Store, BaseViewModel {
     } else if (state == CourierIsOnWay.instance) {
       nextState = PackageIsOnWay.instance;
     } else if (state == PackageIsOnWay.instance) {
-      //Deliver order function
+      showCloseOrderDialog(data);
       return;
     }
     await fetchNewOrderStateToApi(nextState!.text, data);
@@ -119,5 +126,66 @@ abstract class _OrdersViewModelBase with Store, BaseViewModel {
     }
   }
 
-  showCloseOrderDialog(OrdersViewModel viewModel, OrderModel data) {}
+  showCloseOrderDialog(OrderModel data) {
+    showDialog(
+      context: viewModelContext,
+      builder: (context) => AreYouSure(
+        question: "Sipariş Teslim Girilecek",
+        description: Text(
+          "Bu işlemin geri dönüşü yoktur.",
+          style: TextConsts.instance.regularWhite18,
+        ),
+        onPressed: () async => await _deliverOrder(data),
+      ),
+    );
+  }
+
+  @action
+  Future<void> _deliverOrder(OrderModel data) async {
+    await fetchNewOrderStateToApi(PackageDelivered.instance.text, data);
+    if (data.addressData.verifierCourierId == null) {
+      navigationManager.navigate(
+        OrderReview(
+          viewModel: viewModel!,
+          data: data.addressData,
+        ),
+      );
+      return;
+    }
+    navigatorPop();
+  }
+
+  Future<void> updateAddressAsCourier(AddressModel data) async {
+    data.courierAddressDirection = addressDirection.text;
+    data.isVerifiedFromCourier = isAddressTrue;
+    data.verifierCourierId =
+        localeManager.getStringData(LocaleKeysEnums.id.name);
+    final bool? response =
+        await service.updateAddressAsCourier(data, accessToken!);
+    if (response == null || !response) {
+      showErrorDialog();
+      return;
+    }
+    navigatorPop();
+  }
+
+  showCourierAddressDirection(AddressModel data) {
+    showDialog(
+      context: viewModelContext,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            data.isVerifiedFromCourier
+                ? "Bu adres kurye tarafından onaylandı."
+                : "Bu adres kurye tarafından yanlış olarak işaretlendi.",
+            style: TextConsts.instance.regularBlack18Bold,
+          ),
+          content: Text(
+            "Kurye adres tarifi:\n${data.courierAddressDirection}",
+            style: TextConsts.instance.regularBlack18,
+          ),
+        );
+      },
+    );
+  }
 }

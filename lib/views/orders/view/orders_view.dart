@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:haydi_ekspres_dev_tools/constants/constants_index.dart';
+import 'package:haydi_ekspres_dev_tools/haydi_ekspres_dev_tools.dart';
 import 'package:haydi_ekspres_dev_tools/widgets/widgets_index.dart';
 import '../../../core/base/view/base_view.dart';
 import '../../../core/widgets/order_widget.dart';
@@ -9,6 +10,7 @@ import '../viewmodel/orders_viewmodel.dart';
 
 part 'components/active_orders.dart';
 part 'components/courier_data.dart';
+part 'components/order_review.dart';
 
 class OrdersView extends StatelessWidget {
   const OrdersView({super.key});
@@ -30,6 +32,7 @@ class OrdersView extends StatelessWidget {
         },
         onModelReady: (model) {
           model.init();
+          model.setInstance(model);
           model.setContext(context);
         },
         onDispose: (model) {});

@@ -74,4 +74,20 @@ final class OrdersService extends NetworkManager {
       return null;
     }
   }
+
+  Future<bool?> updateAddressAsCourier(
+      AddressModel data, String accessToken) async {
+    try {
+      final response = await network.post(
+        Endpoints.instance.editAddress,
+        data: data.toJson(),
+        options: Options(
+          headers: setHeaderAccessToken(accessToken),
+        ),
+      );
+      return bool.parse(response.data);
+    } catch (e) {
+      return null;
+    }
+  }
 }
