@@ -61,8 +61,27 @@ mixin _$OrdersViewModel on _OrdersViewModelBase, Store {
         .run(() => super.fetchNewOrderStateToApi(newStateText, data));
   }
 
+  late final _$_deliverOrderAsyncAction =
+      AsyncAction('_OrdersViewModelBase._deliverOrder', context: context);
+
+  @override
+  Future<void> _deliverOrder(OrderModel data) {
+    return _$_deliverOrderAsyncAction.run(() => super._deliverOrder(data));
+  }
+
   late final _$_OrdersViewModelBaseActionController =
       ActionController(name: '_OrdersViewModelBase', context: context);
+
+  @override
+  dynamic _listenNewOrders() {
+    final _$actionInfo = _$_OrdersViewModelBaseActionController.startAction(
+        name: '_OrdersViewModelBase._listenNewOrders');
+    try {
+      return super._listenNewOrders();
+    } finally {
+      _$_OrdersViewModelBaseActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   dynamic _listenOrderStateUpdate(OrderModel data) {

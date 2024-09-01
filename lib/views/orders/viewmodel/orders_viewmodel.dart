@@ -19,7 +19,9 @@ abstract class _OrdersViewModelBase with Store, BaseViewModel {
   void setInstance(OrdersViewModel model) => viewModel = model;
 
   @override
-  init() async {}
+  init() async {
+    _listenNewOrders();
+  }
 
   OrdersViewModel? viewModel;
 
@@ -32,6 +34,18 @@ abstract class _OrdersViewModelBase with Store, BaseViewModel {
   @observable
   bool isWorking = false;
   final OrdersService service = OrdersService();
+
+  @action
+  _listenNewOrders() {
+    WebSocketManager.instance.webSocketReceiver(
+      localeManager.getStringData(LocaleKeysEnums.id.name),
+      (element) {
+        final OrderModel asModel = OrderModel.fromJson(element);
+        activeOrders.add(asModel);
+        _listenOrderStateUpdate(asModel);
+      },
+    );
+  }
 
   Future<bool> getCourierData() async {
     final CourierModel? response = await service.getCourier(
